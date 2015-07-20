@@ -1,0 +1,30 @@
+select T.dt Date, sum(distinct(T.count_L)) over (order by T.dt) Civillians,
+sum(distinct(T.count_P)) over (order by T.dt) Facts
+from
+(
+SELECT
+FACTS_TABLE.dt,
+count(FACTS_TABLE.key) count_P,
+count(PEOPLE.key) count_L
+FROM 
+FACTS_TABLE,
+PEOPLE,
+PEOPLE-FACTS
+WHERE 
+(FACTS_TABLE.KEY= PEOPLE-FACTS.KEY)
+ AND (PEOPLE.KEY=PEOPLE-FACTS.KEY)
+ AND(
+((FACTS_TABLE.type)=('income')) 
+)
+ AND(
+(FACTS_TABLE.dt  between   TO_DATE('15.01.2014','DD.MM.RRRR') AND TO_DATE('20.01.2014','DD.MM.RRRR')) 
+)
+ AND(
+((FACTS_TABLE.door)=('airport')) 
+)
+ AND(
+((PEOPLE.origin)<>('RUS')) 
+)
+group by FACTS_TABLE.dt
+) T
+
